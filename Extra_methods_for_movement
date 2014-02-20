@@ -1,0 +1,17 @@
+repeatedMove(direction, num):
+    if direction == "forward":
+        for n=1 to num :                # could be 0 to num possibly
+            moveForward();
+    elif direction == "right":
+        for n=1 to num :
+            moveRight();
+    elif direction == "left":
+        for n=1 to num :
+            moveLeft();
+
+repeatUntilColision():          # will need to have done some wall detection stuff for this to work
+    colision=false
+    while colision=false:
+        MoveForward()
+        if wallDetected:
+            colision=true
