@@ -15,3 +15,8 @@ repeatUntilColision():          # will need to have done some wall detection stu
         MoveForward()
         if wallDetected:
             colision=true
+end():
+	if askQuestion()==True:
+		nextMaze
+	else:
+		restartCurrentMaze
