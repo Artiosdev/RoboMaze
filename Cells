@@ -1,0 +1,19 @@
+class Cells:
+    def __init__(self):
+        self.wall = False
+        self.endpoint = False
+        self.question = False
+    def setWall(self):
+        self.wall = True
+    def setQuestion(self):
+        self.question = True
+    def setEndpoint(self):
+        self.question = True
+    def checkWall(self):
+        return self.wall
+    def checkQuestion(self):
+        return self.question
+    def checkEndpoint(self):
+        return self.question
+
+    
