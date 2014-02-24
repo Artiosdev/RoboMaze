@@ -1,0 +1,104 @@
+import pygame ,sys,robot,grid
+from pygame.locals import *
+
+robot1 = robot.spriteMovement(1,1)
+playerposition = robot1.getPosition()
+
+level1 = grid.Grid(12,11)
+level1.initialiseGrid()
+
+for i in range(0,10):
+    level1.setWall(9,i)
+
+
+
+pygame.init()
+fpsClock = pygame.time.Clock()
+
+windowSurfaceObj = pygame.display.set_mode((500,500))
+pygame.display.set_caption("Testing")
+
+width = 50 # squarewidth = width of maze image / number of squares
+height = 50 
+
+gridObj = pygame.image.load("grid.jpg")
+spriteObj = pygame.image.load("sprite.png").convert_alpha()
+soundObj = pygame.mixer.Sound("atari.wav")
+soundObj2 = pygame.mixer.Sound("computer_move.wav")
+
+# robot commands
+
+def moveForward():
+    newplayerposition = robot1.CheckCollisions()
+    if (level1.checkWall(newplayerposition[0],newplayerposition[1]) == True):
+        soundObj.play()
+        return False
+    else:
+        robot1.moveForward()
+        playerposition = robot1.getPosition()
+        return True
+    #if (level1.checkQuestion(newplayerposition[0],newplayerposition[1]) == True):
+        ##Activate Question code
+    #if (level1.checkEndpoint(newplayerposition[0],newplayerposition[1]) == True):
+        ##Activate end code     
+
+def rotateRight(spriteObj):
+        robot1.rotateRight()
+        spriteObj = pygame.transform.rotate(spriteObj,-90)
+        return spriteObj
+
+def rotateLeft(spriteObj):
+    robot1.rotateLeft()
+    spriteObj = pygame.transform.rotate(spriteObj,90)
+    return spriteObj
+
+def repeatedMove(self,direction,num):
+        if direction == "forward":
+            for n in range(1,num) :                
+                moveForward();
+        elif n == "right":
+            for n in range(1,num):
+                rotateRight();
+        elif direction == "left":
+            for n in range(1,num):
+                rotateLeft();
+def repeatUntilCollision():
+    collision = moveForward()
+    while collision == True:
+        collision = moveForward()
+        
+        
+
+                
+
+while True:
+
+
+    windowSurfaceObj.blit(gridObj,(0,0))
+    windowSurfaceObj.blit(spriteObj,(playerposition[0]*height,playerposition[1]*width))
+
+
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        
+        if (event.type==pygame.KEYDOWN):
+
+            if (event.key==pygame.K_LEFT):
+                spriteObj = rotateLeft(spriteObj)    
+            elif (event.key==pygame.K_RIGHT): 
+                spriteObj = rotateRight(spriteObj)
+            elif (event.key==pygame.K_UP):
+                moveForward()
+            elif (event.key==pygame.K_SPACE):
+                repeatUntilCollision()
+                
+                
+                
+    pygame.display.update()
+    fpsClock.tick(30)
+
+
+
+
