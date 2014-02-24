@@ -1,0 +1,39 @@
+import cells
+
+class Grid:
+    def __init__(self,width,height):
+        self.cells = []
+        self.width = width
+        self.height = height
+
+
+    def initialiseGrid(self):
+        for i in range(self.width):
+            column = []
+            for i in range(self.height):
+                square = cells.Cells()
+                column.append(square)
+            self.cells.append(column)       
+
+    def setWall(self,x,y):
+        self.cells[x][y].setWall()
+    def setEndpoint(self,x,y):
+        self.cells[x][y].setQuestion()
+    def setQuestion(self,x,y):
+        self.cells[x][y].setEndpoint()
+    def checkWall(self,x,y):
+        if (self.cells[x][y].checkWall()) == True:
+            return True
+        else:
+            return False
+    def checkQuestion(self,x,y):
+        if (self.cells[x][y].checkQuestion()) == True:
+            return True
+        else:
+            return False
+    def checkEndpoint(self,x,y):
+        if (self.cells[x][y].checkQuestion()) == True:
+            return True
+        else:
+            return False
+        
