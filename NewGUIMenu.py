@@ -1,8 +1,10 @@
-import pygame, Buttons
+import pygame, Buttons, robot, grid
 
 ####
 
 class PygView():
+
+
 
   
     def __init__(self,height, width, fps):
@@ -28,17 +30,89 @@ class PygView():
         self._DictionaryButton=Buttons.Button()
         self._HelpButton=Buttons.Button()
         self._RunButton=Buttons.Button()
+        self._map=0
+        self._fpsClock = pygame.time.Clock()
+        self._spriteObj = pygame.image.load("sprite.png").convert_alpha()
 
+        self._soundObj = pygame.mixer.Sound("atari.wav")
+        self._soundObj2 = pygame.mixer.Sound("computer_move.wav")
+        self._gamemode = False
+        self._menuMode = True
+
+        self._robot1 = robot.spriteMovement(1,1)
+        self._playerPosition = self._robot1.getPosition()
+
+        self._level1 = grid.Grid(12,11)
+
+    def moveForward(self):
+        newplayerposition = self._robot1.CheckCollisions()
+        if (self._level1.checkWall(newplayerposition[0],newplayerposition[1]) == True):
+            self._soundObj.play()
+            return True
+        else:
+            self._robot1.moveForward()
+            self._soundObj2.play()
+            self._playerposition = self._robot1.getPosition()
+            return False
+        #if (level1.checkQuestion(newplayerposition[0],newplayerposition[1]) == True):
+            ##Activate Question code
+        #if (level1.checkEndpoint(newplayerposition[0],newplayerposition[1]) == True):
+            ##Activate end code     
+
+    def rotateRight(self,spriteObj):
+            self._robot1.rotateRight()
+            spriteObj = pygame.transform.rotate(self._spriteObj,-90)
+            return spriteObj
+
+    def rotateLeft(self,spriteObj):
+        self._robot1.rotateLeft()
+        spriteObj = pygame.transform.rotate(self._spriteObj,90)
+        return spriteObj
+
+    def repeatedMove(self,direction,num):
+            if direction == "forward":
+                for n in range(1,num) :                
+                    moveForward();
+            elif n == "right":
+                for n in range(1,num):
+                    rotateRight();
+            elif direction == "left":
+                for n in range(1,num):
+                    rotateLeft();
+    def repeatUntilCollision():
+        collision = self.moveForward()
+        while collision == False:
+            collision = self.moveForward()
+            
 
     def run(self):
         """The mainloop
         """
         running = True
+
         PygView.SetUpButtonMain(self)
         PygView.SetUpImage(self)
         PygView.SetUpButtonGamePlay(self)
         while running:
+
+            self._playerPosition = self._robot1.getPosition()
+            
+
+
+
+            if(self._menuMode == True):
+                self._screen.blit(self._menu, (0, 0))
+
+        
+            
+            if(self._gamemode == True):
+                self._screen.blit(self._map,(0,0))
+                self._screen.blit(self._spriteObj,(self._playerPosition[0]*42,self._playerPosition[1]*20))
+                
+            
             for event in pygame.event.get():
+               
+
                 if event.type == pygame.QUIT:
                     running = False 
                 elif event.type == pygame.KEYDOWN:
@@ -52,10 +126,14 @@ class PygView():
                         self._menu=pygame.transform.scale(self._menu,(0,0))                                  # resizing the menu screen so it disappear
                         self._mazeScreen = pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF)
                         pygame.display.flip()                                                                # display the changes to the menu
-                        self._mazeScreen.blit(self._maze,(0,0))                                              # apply the changes with maze to the screen
-                        pygame.display.flip()
-                        pygame.display.update()                                                              # update the change to the screen
+                        self.loadLevel(0)#the number will have to change using a counter
+                        #pygame.display.flip()
+                        #pygame.display.update()                                                              # update the change to the screen
+                        self._gamemode = True
+                        self._menuMode = False
+                        self._level1.initialiseGrid()
 
+                        
                     elif self._DictionaryButton.pressed(pygame.mouse.get_pos()) :                        
                         self._width=569
                         self._height=369
@@ -133,19 +211,26 @@ class PygView():
                         pygame.display.flip()
                         pygame.display.update()
 
-                    
-                    
+                if (event.type==pygame.KEYDOWN):
 
-            self._screen.blit(self._menu,(0,0))
+                    if (event.key==pygame.K_LEFT):
+                        self._spriteObj = self.rotateLeft(self._spriteObj)    
+                    elif (event.key==pygame.K_RIGHT): 
+                        self._spriteObj = self.rotateRight(self._spriteObj)
+                    elif (event.key==pygame.K_UP):
+                        self.moveForward()
+                    elif (event.key==pygame.K_SPACE):
+                        self.repeatUntilCollision()
+                   
+
                     
             pygame.display.flip()
             pygame.display.update()
-
+            self._fpsClock.tick(30)
             #PygView.play_time(self)
             #ygame.display.flip()
             #pygame.display.update()
             
-            self._screen.blit(self._menu, (0, 0))
             
         pygame.quit()
 
@@ -174,7 +259,7 @@ class PygView():
         self._menu=pygame.image.load('Concept_Art4.png') # load the image
         self._menu=pygame.transform.scale(self._menu,(600,400)) # change the size of the image in terms of height and width
 
-        self._maze=pygame.image.load('GamePlayScreen.png') # Same as above
+        self._maze=pygame.image.load('Concept_Art9.png') # Same as above
         self._maze=pygame.transform.scale(self._maze,(569,369))
 
 
@@ -188,10 +273,15 @@ class PygView():
         self._HelpButton.create_button(self._mazeScreen,(173,216,230),400,150,160,82,8,'Help',(0,0,0))
         self._RunButton.create_button(self._mazeScreen,(173,216,230),400,245,160,115,8,'Run',(0,0,0))
 
+    def loadLevel(self, levelNum):
+        levelimages = ['Concept_Art3.png','Concept_Art5.png','Concept_Art6.png','Concept_Art7.png','Concept_Art8.png']
+        self._map=pygame.image.load(levelimages[levelNum]) # Same as above
+        self._map=pygame.transform.scale(self._map,(569,369))
+
+    
 ####
 
 if __name__ == '__main__':
     
-    # call with the height, width of window and fps
-    PygView(400,600, 30).run()
-
+    # call with the height, width of window and fps 400,600,30
+    PygView(400,600,30).run()
