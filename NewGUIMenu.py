@@ -12,10 +12,11 @@ class PygView():
         """
         pygame.init() # define the pygame interface
         pygame.display.set_caption("RoboGuide - Press ESC to quit")
+        self._infoObj = pygame.display.Info()
         self._width = width
         self._height = height
-        self._screen = pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF) #initialise the screen
-        self._mazeScreen = pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF)
+        self._screen = pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF|pygame.FULLSCREEN) #initialise the screen
+        self._mazeScreen = pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF|pygame.FULLSCREEN)
         self._menu = 0
         self._maze= 0
         self._instructions=0
@@ -107,8 +108,8 @@ class PygView():
             
             if(self._gamemode == True):
                 self._screen.blit(self._map,(0,0))
-                self._screen.blit(self._spriteObj,(self._playerPosition[0]*42,self._playerPosition[1]*20))
-                
+                self._screen.blit(self._spriteObj,(self._playerPosition[0]*(self._infoObj.current_w/22.5),self._playerPosition[1]*(self._infoObj.current_h/10)))
+                ## The 22.5 and 10 values will change depending on the size of the map. 
             
             for event in pygame.event.get():
                
@@ -124,7 +125,7 @@ class PygView():
                         self._width=569                                                                     # new width for the screen
                         self._height= 369                                                                    # new height for the screen
                         self._menu=pygame.transform.scale(self._menu,(0,0))                                  # resizing the menu screen so it disappear
-                        self._mazeScreen = pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF)
+                        self._mazeScreen = pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF|pygame.FULLSCREEN)
                         pygame.display.flip()                                                                # display the changes to the menu
                         self.loadLevel(0)#the number will have to change using a counter
                         #pygame.display.flip()
@@ -137,7 +138,7 @@ class PygView():
                     elif self._DictionaryButton.pressed(pygame.mouse.get_pos()) :                        
                         self._width=569
                         self._height=369
-                        self._screen= pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF) # set up a screen with the new width and height
+                        self._screen= pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF|pygame.FULLSCREEN) # set up a screen with the new width and height
                         pygame.display.flip()                                                                # display the changes to the menu
                         self._screen.blit(self._screen,(0,0))
                         self._screen.fill((173,216,230))
@@ -148,7 +149,7 @@ class PygView():
                     elif self._HelpButton.pressed(pygame.mouse.get_pos()) :
                         self._width=569
                         self._height=369
-                        self._screen= pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF) # set up a screen with the new width and height
+                        self._screen= pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF|pygame.FULLSCREEN) # set up a screen with the new width and height
                         pygame.display.flip()                                                                # display the changes to the menu
                         self._screen.blit(self._screen,(0,0))
                         self._screen.fill((173,216,230))
@@ -159,7 +160,7 @@ class PygView():
                     elif self._RunButton.pressed(pygame.mouse.get_pos()) :
                         self._width=569
                         self._height=369
-                        self._screen= pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF) # set up a screen with the new width and height
+                        self._screen= pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF|pygame.FULLSCREEN) # set up a screen with the new width and height
                         pygame.display.flip()                                                                # display the changes to the menu
                         self._screen.blit(self._screen,(0,0))
                         self._screen.fill((173,216,230))
@@ -173,7 +174,7 @@ class PygView():
                     elif self._InstructButton.pressed(pygame.mouse.get_pos()):
                         self._width=900
                         self._height=400
-                        self._screen= pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF) # set up a screen with the new width and height
+                        self._screen= pygame.display.set_mode((self._width, self._height), pygame.DOUBLEBUF|pygame.FULLSCREEN) # set up a screen with the new width and height
                         self._menu=pygame.transform.scale(self._menu,(0,0))                                  # resizing the menu screen so it disappear
                         self._screen.blit(self._menu,(0,0))                                                  # apply the changes with menu to the screen
                         pygame.display.flip()                                                                # display the changes to the menu
@@ -276,7 +277,7 @@ class PygView():
     def loadLevel(self, levelNum):
         levelimages = ['Concept_Art3.png','Concept_Art5.png','Concept_Art6.png','Concept_Art7.png','Concept_Art8.png']
         self._map=pygame.image.load(levelimages[levelNum]) # Same as above
-        self._map=pygame.transform.scale(self._map,(569,369))
+        self._map=pygame.transform.scale(self._map,(self._infoObj.current_w,self._infoObj.current_h))
 
     
 ####
